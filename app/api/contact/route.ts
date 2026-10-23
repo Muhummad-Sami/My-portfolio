@@ -21,9 +21,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!message || typeof message !== "string" || message.trim().length < 10) {
+    if (!message || typeof message !== "string" || message.trim().length < 5) {
       return NextResponse.json(
-        { error: "Please enter a message with at least 10 characters." },
+        { error: "Please enter a message with at least 5 characters." },
         { status: 400 }
       );
     }
@@ -62,41 +62,42 @@ export async function POST(request: Request) {
       }
     } else {
       // Option 2: FormSubmit.co direct email forwarder to samirao9372@gmail.com
-      try {
-        const fsRes = await fetch("https://formsubmit.co/ajax/samirao9372@gmail.com", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Referer": "https://muhammadsami.dev",
-          },
-          body: JSON.stringify({
-            name: cleanData.name,
-            email: cleanData.email,
-            _subject: `New Portfolio Message: ${cleanData.subject}`,
-            message: cleanData.message,
-            _replyto: cleanData.email,
-            _template: "table",
-            _captcha: "false",
-          }),
-        });
+      const fsRes = await fetch("https://formsubmit.co/ajax/samirao9372@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": "https://muhammadsami.dev",
+          "Referer": "https://muhammadsami.dev/",
+        },
+        body: JSON.stringify({
+          name: cleanData.name,
+          email: cleanData.email,
+          _subject: `New Portfolio Message: ${cleanData.subject}`,
+          message: cleanData.message,
+          _replyto: cleanData.email,
+          _template: "table",
+          _captcha: "false",
+        }),
+      });
 
-        const fsData = await fsRes.json();
-        console.log("[FORMSUBMIT RESPONSE]:", fsData);
+      const fsData = await fsRes.json().catch(() => null);
+      console.log("[FORMSUBMIT RESPONSE]:", fsData);
 
-        if (fsData && fsData.success === "false" && fsData.message?.includes("needs Activation")) {
+      if (fsData && fsData.success === "false") {
+        console.error("FormSubmit rejected submission:", fsData);
+        if (fsData.message?.toLowerCase().includes("activation") || fsData.message?.toLowerCase().includes("activate")) {
           return NextResponse.json(
             {
               success: true,
               needsActivation: true,
               message:
-                "Message received! Note: FormSubmit requires a one-time activation. Please check samirao9372@gmail.com to activate the form, or use the direct email link below.",
+                "Form submitted! FormSubmit requires a one-time activation. Please check samirao9372@gmail.com (including Spam/Junk folder) and click the activation link.",
             },
             { status: 200 }
           );
         }
-      } catch (err) {
-        console.error("FormSubmit dispatch error:", err);
+        throw new Error(fsData.message || "Failed to forward message");
       }
     }
 
@@ -118,3 +119,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

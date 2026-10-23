@@ -3,77 +3,89 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────────
-   DESIGN TOKENS — Warm Ivory / Charcoal / Forest Green system
+   DESIGN TOKENS — Deep Black & Electric Violet (Dark) + Light Mode
 ──────────────────────────────────────────────────────────────────── */
 @layer base {
-  :root {
-    /* Light mode — editorial, warm, premium */
-    --bg-primary:    #F7F5EF;
-    --bg-secondary:  #EDE9DF;
-    --bg-card:       #FFFFFF;
-    --bg-elevated:   #FAF8F3;
+  /* ── DARK MODE (default) ─────────────────────────── */
+  :root,
+  .dark {
+    /* Transparent-first: animation shows through everywhere */
+    --bg-primary:    transparent;
+    --bg-secondary:  rgba(8, 7, 13, 0.7);
+    --bg-card:       rgba(14, 11, 24, 0.75);
+    --bg-elevated:   rgba(21, 17, 36, 0.80);
 
-    --text-primary:   #202321;
-    --text-secondary: #4B524D;
-    --text-muted:     #777B76;
+    --text-primary:   #FFFFFF;
+    --text-secondary: #D1D5DB;
+    --text-muted:     #9CA3AF;
 
-    --border-subtle:  #E3E1D9;
-    --border-strong:  #C9C5BB;
+    --border-subtle:  rgba(30, 25, 51, 0.8);
+    --border-strong:  rgba(47, 39, 82, 0.9);
 
-    --accent-primary: #145C46;
-    --accent-hover:   #0E4333;
-    --accent-subtle:  rgba(20, 92, 70, 0.08);
-    --accent-border:  rgba(20, 92, 70, 0.22);
+    --accent-primary: #7C3AED;
+    --accent-hover:   #6D28D9;
+    --accent-subtle:  rgba(124, 58, 237, 0.16);
+    --accent-border:  rgba(124, 58, 237, 0.40);
 
-    /* Swiss grid decorative line */
-    --grid-line: rgba(32, 35, 33, 0.05);
+    --grid-line: rgba(124, 58, 237, 0.04);
+
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
-  .dark {
-    /* Dark mode — graphite, elevated surfaces, soft green accent */
-    --bg-primary:    #171A19;
-    --bg-secondary:  #1D2120;
-    --bg-card:       #202523;
-    --bg-elevated:   #242927;
+  /* ── LIGHT MODE ──────────────────────────────────── */
+  .light {
+    --bg-primary:    #F5F3FF;
+    --bg-secondary:  #EDE9FE;
+    --bg-card:       #FFFFFF;
+    --bg-elevated:   #F3F0FF;
 
-    --text-primary:   #F2F1EB;
-    --text-secondary: #B2B8B2;
-    --text-muted:     #6B736B;
+    --text-primary:   #0F0A1E;
+    --text-secondary: #3B1F6A;
+    --text-muted:     #6B5A8A;
 
-    --border-subtle:  #2A2F2D;
-    --border-strong:  #3A413E;
+    --border-subtle:  #DDD6FE;
+    --border-strong:  #C4B5FD;
 
-    --accent-primary: #76C6A3;
-    --accent-hover:   #5FB593;
-    --accent-subtle:  rgba(118, 198, 163, 0.12);
-    --accent-border:  rgba(118, 198, 163, 0.28);
+    --accent-primary: #7C3AED;
+    --accent-hover:   #6D28D9;
+    --accent-subtle:  rgba(124, 58, 237, 0.10);
+    --accent-border:  rgba(124, 58, 237, 0.35);
 
-    --grid-line: rgba(242, 241, 235, 0.04);
+    /* Overlay for scroll animation BG — light mode (lighter, more visible) */
+    --anim-overlay-from: rgba(245,243,255,0.45);
+    --anim-overlay-via:  rgba(237,233,254,0.50);
+    --anim-overlay-to:   rgba(243,240,255,0.65);
+
+    --grid-line: rgba(124, 58, 237, 0.06);
   }
 
   html {
     scroll-behavior: smooth;
-    color-scheme: light dark;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    background-color: #000000;
+  }
+
+  html.light {
+    color-scheme: light;
+    background-color: #F5F3FF;
   }
 
   body {
-    background-color: var(--bg-primary);
+    background-color: transparent;
     color: var(--text-primary);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   ::selection {
-    background-color: #145C46;
-    color: #F7F5EF;
-  }
-
-  .dark ::selection {
-    background-color: #76C6A3;
-    color: #171A19;
+    background-color: #7C3AED;
+    color: #FFFFFF;
   }
 
   /* ── Focus ring ─────────────────────────────────── */
@@ -153,9 +165,9 @@
     width: 100%;
   }
 
-  /* Gradient text */
+  /* Gradient text matching violet brand */
   .gradient-text {
-    background: linear-gradient(135deg, var(--accent-primary) 0%, #2A9D7A 60%, #76C6A3 100%);
+    background: linear-gradient(135deg, #C084FC 0%, #A855F7 50%, #7C3AED 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -215,3 +227,25 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   TEXT LEGIBILITY OVER ANIMATED BACKGROUND
+   Applies a subtle shadow to ALL text so it pops over any frame
+──────────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  text-shadow: 0 2px 24px rgba(0,0,0,0.85), 0 1px 6px rgba(0,0,0,0.6);
+}
+
+p, li, span, label, a {
+  text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+}
+
+/* Cards get a stronger backdrop for readability */
+.bg-card-backdrop {
+  background: rgba(10, 8, 20, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Scrollbar track transparent to not block animation */
+::-webkit-scrollbar-track { background: transparent; }

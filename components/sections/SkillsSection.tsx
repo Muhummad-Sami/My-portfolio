@@ -4,66 +4,69 @@ import React from "react";
 import { motion } from "framer-motion";
 import { PORTFOLIO_DATA } from "@/data/portfolio-data";
 import { Code2, Server, Database, BarChart3, Cpu, Network } from "lucide-react";
-import SectionHeader from "@/components/layout/SectionHeader";
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
-  "Programming Languages":                Code2,
-  "Full-Stack Web Development":           Server,
-  "Databases & Data Storage":             Database,
+  "Programming Languages": Code2,
+  "Full-Stack Web Development": Server,
+  "Databases & Data Storage": Database,
   "Data Analysis & Business Intelligence": BarChart3,
-  "AI & Machine Learning":               Cpu,
-  "Systems, Networking & DevOps":        Network,
+  "AI & Machine Learning": Cpu,
+  "Systems, Networking & DevOps": Network,
 };
 
 export default function SkillsSection() {
   return (
-    <section id="skills" className="py-20 md:py-28 border-b border-[var(--border-subtle)] relative overflow-hidden">
-      <div className="absolute inset-0 swiss-grid pointer-events-none opacity-50" aria-hidden="true" />
-
+    <section id="skills" className="py-20 md:py-28 relative overflow-hidden">
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+        {/* Section Heading matching reference screenshot */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
         >
-          <SectionHeader index="03" label="Skills" heading="Skills & Technologies" />
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Skills & Technologies
+          </h2>
         </motion.div>
 
-        {/* Skill category cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* Skill category cards matching reference design */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {PORTFOLIO_DATA.skills.map((category, idx) => {
             const Icon = CATEGORY_ICONS[category.title] || Code2;
             return (
               <motion.div
                 key={category.title}
-                initial={{ opacity: 0, y: 18 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.42, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="group flex flex-col bg-[var(--bg-card)] rounded-xl border border-[var(--border-subtle)] p-5 hover:border-[var(--border-strong)] hover:shadow-editorial dark:hover:shadow-editorial-dark transition-all duration-200"
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                className="group flex flex-col bg-[#0D0B18]/85 backdrop-blur-md rounded-2xl border border-[#231C38] p-6 hover:border-[#7C3AED]/50 hover:shadow-[0_0_25px_rgba(124,58,237,0.2)] transition-all duration-300"
               >
                 {/* Card header */}
-                <div className="flex items-center gap-3 pb-3 border-b border-[var(--border-subtle)] mb-4">
-                  <div className="p-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--accent-primary)] group-hover:bg-[var(--accent-subtle)] transition-colors">
+                <div className="flex items-center gap-3 pb-3 border-b border-[#231C38] mb-4">
+                  <div className="p-2 rounded-xl bg-[#1A142E] text-[#C084FC] group-hover:bg-[#7C3AED]/20 transition-colors">
                     <Icon className="w-4 h-4" />
                   </div>
-                  <h3 className="font-serif text-base font-bold text-[var(--text-primary)] leading-tight">
+                  <h3 className="text-base font-bold text-white leading-tight">
                     {category.title}
                   </h3>
                 </div>
 
                 {category.description && (
-                  <p className="text-xs text-[var(--text-muted)] mb-4 leading-relaxed">{category.description}</p>
+                  <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+                    {category.description}
+                  </p>
                 )}
 
-                {/* Skill pills */}
-                <div className="flex flex-wrap gap-1.5">
+                {/* Skill pills matching reference design */}
+                <div className="flex flex-wrap gap-2 mt-auto">
                   {category.skills.map((skill) => (
                     <span
                       key={skill.name}
                       title={skill.context}
-                      className="inline-block px-2 py-0.5 rounded-md bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] hover:border-[var(--accent-border)] hover:text-[var(--accent-primary)] hover:bg-[var(--accent-subtle)] transition-colors cursor-default"
+                      className="inline-block px-3 py-1 rounded-full bg-[#181329] border border-[#2D2447] text-xs font-mono text-[#D8B4FE] hover:border-[#7C3AED] hover:text-white hover:bg-[#7C3AED]/20 transition-colors cursor-default"
                     >
                       {skill.name}
                     </span>
@@ -73,22 +76,6 @@ export default function SkillsSection() {
             );
           })}
         </div>
-
-        {/* Bottom note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-          className="mt-10 p-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] flex items-center justify-between"
-        >
-          <span>
-            No subjective percentage bars. Each competency is validated by actual repository commits or academic transcripts.
-          </span>
-          <span className="font-mono text-[11px] text-[var(--accent-primary)] hidden sm:inline">
-            CV Verified
-          </span>
-        </motion.div>
       </div>
     </section>
   );

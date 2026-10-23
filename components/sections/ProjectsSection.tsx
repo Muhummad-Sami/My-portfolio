@@ -1,19 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ExternalLink,
-  Github,
-  ArrowUpRight,
-  Server,
-  LayoutGrid,
-  X,
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Linkedin,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { ExternalLink, Github, ArrowUpRight, Server, Linkedin } from "lucide-react";
 import { PORTFOLIO_DATA, Project } from "@/data/portfolio-data";
 import ProjectModal from "@/components/projects/ProjectModal";
 
@@ -27,15 +16,6 @@ const CATEGORIES = [
 
 type CategoryType = (typeof CATEGORIES)[number];
 
-// ── colour chips per category ──────────────────────────────────────────────
-const CAT_STYLE: Record<string, string> = {
-  "Full-Stack Development": "bg-sky-500/10 text-sky-700 dark:text-sky-400",
-  "AI & Machine Learning": "bg-violet-500/10 text-violet-700 dark:text-violet-400",
-  "Data Analysis": "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  "Systems & Networking": "bg-rose-500/10 text-rose-700 dark:text-rose-400",
-};
-
-// ── single compact project card ────────────────────────────────────────────
 function ProjectCard({
   project,
   index,
@@ -48,140 +28,101 @@ function ProjectCard({
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.28, delay: index * 0.04 }}
-      className="group flex flex-col bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl overflow-hidden hover:border-[var(--border-strong)] hover:shadow-editorial transition-all duration-200"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.35, delay: index * 0.05 }}
+      className="group flex flex-col bg-[#0D0B18]/90 backdrop-blur-md border border-[#231C38] rounded-2xl overflow-hidden hover:border-[#7C3AED]/60 hover:shadow-[0_0_30px_rgba(124,58,237,0.25)] transition-all duration-300"
     >
-      {/* ── header band ── */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-0">
-        <span
-          className={`inline-block px-2 py-0.5 text-[10px] font-mono rounded font-medium ${CAT_STYLE[project.category] ?? "bg-[var(--accent-subtle)] text-[var(--accent-primary)]"}`}
-        >
-          {project.category}
+      {/* ── Top Preview Banner (matches image cards in screenshot) ── */}
+      <div className="relative h-44 w-full bg-gradient-to-br from-[#1E1438] via-[#120D24] to-[#0A0714] flex items-center justify-center overflow-hidden border-b border-[#231C38]">
+        {/* Subtle decorative purple pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#7C3AED_1px,transparent_1px)] [background-size:16px_16px] opacity-25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B18] via-transparent to-transparent" />
+
+        <div className="relative z-10 flex flex-col items-center gap-2 text-center px-4">
+          <span className="text-3xl font-mono text-[#C084FC] group-hover:scale-110 transition-transform">
+            ⚡
+          </span>
+          <span className="text-xs font-mono text-[#D8B4FE] tracking-widest uppercase font-semibold">
+            {project.category}
+          </span>
+        </div>
+
+        <span className="absolute top-3 right-3 text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-black/60 border border-white/10 text-gray-300">
+          {project.year}
         </span>
-        <span className="text-[11px] font-mono text-[var(--text-muted)]">{project.year}</span>
       </div>
 
-      {/* ── body ── */}
-      <div className="flex flex-col flex-1 px-5 pt-3 pb-5 gap-3">
-        {/* title */}
+      {/* ── Body ── */}
+      <div className="flex flex-col flex-1 p-5 gap-3.5">
         <div>
           <button
             type="button"
             onClick={() => onOpen(project)}
-            className="text-left group/title focus:outline-none"
+            className="text-left group/title focus:outline-none w-full"
           >
-            <h3 className="font-serif text-lg sm:text-xl font-bold text-[var(--text-primary)] group-hover/title:text-[var(--accent-primary)] transition-colors leading-snug">
+            <h3 className="text-lg font-bold text-white group-hover/title:text-[#C084FC] transition-colors leading-snug">
               {project.title}
             </h3>
           </button>
-          <p className="text-xs font-serif italic text-[var(--accent-primary)] mt-0.5 leading-snug">
+          <p className="text-xs text-[#A855F7] font-medium mt-0.5">
             {project.subtitle}
           </p>
         </div>
 
-        {/* description */}
-        <p className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-3 flex-1">
+        <p className="text-xs text-gray-300 leading-relaxed line-clamp-2 flex-1">
           {project.description}
         </p>
 
-        {/* metrics chip if available */}
-        {project.metrics && project.metrics.length > 0 && (
-          <div className="flex flex-wrap gap-2 text-[10px] font-mono py-1 px-2.5 rounded bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
-            {project.metrics.map((m, i) => (
-              <span key={i} className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]" />
-                <span className="text-[var(--text-muted)]">{m.label}:</span>
-                <span className="text-[var(--accent-primary)] font-semibold">{m.value}</span>
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* tech tags */}
-        <div className="flex flex-wrap gap-1.5">
-          {project.techStack.map((t) => (
+        {/* Tech Stack Pills matching reference design */}
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {project.techStack.slice(0, 4).map((t) => (
             <span
               key={t}
-              className="px-2 py-0.5 text-[10px] font-mono rounded bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-[var(--text-secondary)]"
+              className="px-2.5 py-0.5 text-[10px] font-mono rounded-full bg-[#181329] border border-[#2D2447] text-[#D8B4FE]"
             >
               {t}
             </span>
           ))}
+          {project.techStack.length > 4 && (
+            <span className="px-2 py-0.5 text-[10px] font-mono rounded-full bg-white/5 text-gray-400">
+              +{project.techStack.length - 4}
+            </span>
+          )}
         </div>
 
-        {/* divider */}
-        <div className="border-t border-[var(--border-subtle)]" />
-
-        {/* action row */}
-        <div className="flex items-center gap-2 pt-0.5 flex-wrap">
-          {/* Case study */}
+        {/* ── Action Buttons (matches purple 'View Details' pill in screenshot) ── */}
+        <div className="pt-2 border-t border-[#231C38] flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => onOpen(project)}
-            className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent-primary)] hover:underline"
+            className="flex-1 inline-flex items-center justify-center py-2 px-4 rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs font-medium transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_20px_rgba(124,58,237,0.5)]"
           >
-            <span>Details</span>
-            <ArrowUpRight className="w-3 h-3" />
+            <span>View Details</span>
           </button>
 
-          <div className="flex-1" />
-
-          {/* Live demo */}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-mono bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-white transition-colors"
-              title="View live deployment"
-            >
-              <ExternalLink className="w-3 h-3" />
-              Live
-            </a>
-          )}
-
-          {/* Backend link (for AI CRM Agent split architecture) */}
-          {(project as any).liveBackendUrl && (
-            <a
-              href={(project as any).liveBackendUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-mono bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-              title="API Backend"
-            >
-              <Server className="w-3 h-3" />
-              API
-            </a>
-          )}
-
-          {/* LinkedIn Video Demo */}
-          {project.linkedinPostUrl && (
-            <a
-              href={project.linkedinPostUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-mono bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 hover:bg-sky-500 hover:text-white transition-colors"
-              title="View LinkedIn video demo"
-            >
-              <Linkedin className="w-3 h-3" />
-              Demo
-            </a>
-          )}
-
-          {/* GitHub */}
           {project.githubUrl && (
             <a
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-mono bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-              title="Source code"
+              className="w-8 h-8 rounded-full border border-[#2D2447] bg-[#181329] flex items-center justify-center text-gray-300 hover:text-white hover:border-[#7C3AED] transition-colors"
+              title="View GitHub Repository"
             >
-              <Github className="w-3 h-3" />
-              Code
+              <Github className="w-3.5 h-3.5" />
+            </a>
+          )}
+
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full border border-[#2D2447] bg-[#181329] flex items-center justify-center text-gray-300 hover:text-[#C084FC] hover:border-[#7C3AED] transition-colors"
+              title="View Live Demo"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
         </div>
@@ -190,7 +131,6 @@ function ProjectCard({
   );
 }
 
-// ── main section ───────────────────────────────────────────────────────────
 export default function ProjectsSection() {
   const [activeCategory, setActiveCategory] = useState<CategoryType>("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -199,136 +139,66 @@ export default function ProjectsSection() {
     (p) => activeCategory === "All" || p.category === activeCategory
   );
 
-  const counts = CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
-    acc[cat] =
-      cat === "All"
-        ? PORTFOLIO_DATA.projects.length
-        : PORTFOLIO_DATA.projects.filter((p) => p.category === cat).length;
-    return acc;
-  }, {});
-
   return (
-    <section id="projects" className="py-20 md:py-28 border-b border-[var(--border-subtle)] relative overflow-hidden">
-      <div className="absolute inset-0 swiss-grid pointer-events-none opacity-50" aria-hidden="true" />
+    <section id="projects" className="py-20 md:py-28 relative overflow-hidden">
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
 
-        {/* ── section header ── */}
+        {/* ── Centered Section Header (matches reference screenshot) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[var(--border-subtle)] mb-10"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-10 space-y-2"
         >
-          <div>
-            <span className="mono-meta text-xs text-[var(--accent-primary)] font-semibold">
-              02 / Projects
-            </span>
-            <h2 className="editorial-heading text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mt-1">
-              Projects & Case Studies
-            </h2>
-          </div>
-          <a
-            href={PORTFOLIO_DATA.personal.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 shrink-0 px-3.5 py-2 rounded-md border border-[var(--border-strong)] bg-[var(--bg-card)] text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-all"
-          >
-            <Github className="w-3.5 h-3.5" />
-            <span>@Muhummad-Sami</span>
-            <ExternalLink className="w-3 h-3 text-[var(--text-muted)]" />
-          </a>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+            My Projects
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+            A collection of projects I&apos;ve worked on, ranging from full-stack web applications
+            to intelligent machine learning deployments and data pipelines.
+          </p>
         </motion.div>
 
-        {/* ── category filters ── */}
-        <div
-          className="flex items-center gap-2 overflow-x-auto pb-2 mb-8 no-scrollbar"
-          role="tablist"
-          aria-label="Filter projects by category"
-        >
+        {/* ── Category Filter Pills ── */}
+        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar flex-wrap">
           {CATEGORIES.map((cat) => {
             const active = activeCategory === cat;
             return (
               <button
                 key={cat}
                 type="button"
-                role="tab"
-                aria-selected={active}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-mono transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                   active
-                    ? "bg-[var(--accent-primary)] text-white border-[var(--accent-primary)] shadow-sm"
-                    : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]"
+                    ? "bg-[#7C3AED] text-white shadow-[0_0_15px_rgba(124,58,237,0.4)]"
+                    : "bg-[#0E0B18] border border-[#231C38] text-gray-400 hover:text-white hover:border-[#7C3AED]/40"
                 }`}
               >
                 {cat}
-                <span
-                  className={`text-[10px] rounded-full px-1.5 py-0.5 font-semibold ${active ? "bg-white/20 text-white" : "bg-[var(--bg-primary)] text-[var(--text-muted)]"}`}
-                >
-                  {counts[cat]}
-                </span>
               </button>
             );
           })}
-
-          {activeCategory !== "All" && (
-            <button
-              type="button"
-              onClick={() => setActiveCategory("All")}
-              className="flex items-center gap-1 ml-1 px-2.5 py-1.5 rounded-full border border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              <X className="w-3 h-3" />
-              Clear
-            </button>
-          )}
         </div>
 
-        {/* ── empty state ── */}
-        {filtered.length === 0 && (
-          <div className="py-16 text-center">
-            <p className="text-sm text-[var(--text-muted)]">No projects in this category.</p>
-            <button
-              onClick={() => setActiveCategory("All")}
-              className="mt-3 text-xs font-mono text-[var(--accent-primary)] underline"
-            >
-              View all projects
-            </button>
-          </div>
-        )}
-
-        {/* ── projects grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((project, i) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={i}
-                onOpen={setSelectedProject}
-              />
-            ))}
-          </AnimatePresence>
+        {/* ── 3-Column Projects Grid ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((project, idx) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              index={idx}
+              onOpen={setSelectedProject}
+            />
+          ))}
         </div>
 
-        {/* ── footer note ── */}
-        <div className="mt-10 pt-6 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs text-[var(--text-muted)]">
-          <span>
-            Showing {filtered.length} of {PORTFOLIO_DATA.projects.length} projects
-          </span>
-          <a
-            href={`${PORTFOLIO_DATA.personal.github}?tab=repositories`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 hover:text-[var(--accent-primary)] transition-colors font-mono"
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>All {22} GitHub repositories</span>
-          </a>
-        </div>
+        {/* Project Modal */}
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
       </div>
-
-      {/* ── case study modal ── */}
-      <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
     </section>
   );
 }
